@@ -3385,8 +3385,8 @@ int snd_soc_dpcm_can_be_free_stop(struct snd_soc_pcm_runtime *fe,
 			break;
 		}
 	}
-
 	spin_unlock_irqrestore(&fe->card->dpcm_lock, flags);
+
 	/* it's safe to free/stop this BE DAI */
 	return ret;
 }
@@ -3510,7 +3510,6 @@ static ssize_t dpcm_show_state(struct snd_soc_pcm_runtime *fe,
 				params_channels(params),
 				params_rate(params));
 	}
-
 	spin_unlock_irqrestore(&fe->card->dpcm_lock, flags);
 out:
 	return offset;
