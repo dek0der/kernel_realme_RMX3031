@@ -262,9 +262,11 @@ static void innolux_panel_del(struct innolux_panel *innolux)
 
 static int innolux_panel_probe(struct mipi_dsi_device *dsi)
 {
+	const struct panel_desc *desc;
 	struct innolux_panel *innolux;
 	int err;
 
+        desc = of_device_get_match_data(&dsi->dev);
 	dsi->lanes = 4;
 	dsi->format = MIPI_DSI_FMT_RGB888;
 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
@@ -283,7 +285,13 @@ static int innolux_panel_probe(struct mipi_dsi_device *dsi)
 		return err;
 
 	err = mipi_dsi_attach(dsi);
-	return err;
+	if (err < 0) {
+		innolux = mipi_dsi_get_drvdata(dsi);
+		innolux_panel_del(innolux);
+		return err;
+	}
+
+	return 0;
 }
 
 static int innolux_panel_remove(struct mipi_dsi_device *dsi)
