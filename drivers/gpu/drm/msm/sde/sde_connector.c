@@ -19,6 +19,8 @@
 #include "sde_encoder.h"
 #include <linux/backlight.h>
 #include <linux/string.h>
+#include <linux/cpu_input_boost.h>
+#include <linux/devfreq_boost.h>
 #include "dsi_drm.h"
 #include "dsi_display.h"
 #include "sde_crtc.h"
@@ -612,8 +614,18 @@ void sde_connector_update_hbm(struct drm_connector *connector)
 			!c_conn->encoder->crtc->state)
 		return;
 
+<<<<<<< HEAD
 	cstate = to_sde_crtc_state(c_conn->encoder->crtc->state);
 	status = cstate->fod_dim_layer != NULL;
+=======
+	if (status) {
+		cpu_input_boost_kick_max(700, true);
+		devfreq_boost_kick_max(DEVFREQ_MSM_CPUBW, 700);
+		devfreq_boost_kick_max(DEVFREQ_MSM_LLCCBW, 700);
+	}
+
+	dsi_panel_set_fod_hbm(panel, status);
+>>>>>>> 0e79f06d704c (fod boosting: add to fod hbm pre)
 
 	if (last_dimlayer_hbm_enabled == is_dimlayer_hbm_enabled &&
 			status == last_dimlayer_status)
